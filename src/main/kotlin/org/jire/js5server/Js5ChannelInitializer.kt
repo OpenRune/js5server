@@ -13,10 +13,11 @@ import org.jire.js5server.codec.init.InitHandler
 import java.util.concurrent.TimeUnit
 
 class Js5ChannelInitializer(
-    private val config: Js5ServiceConfig,
+    private val version: Int,
     private val groupRepository: Js5GroupRepository,
     private val timeout: Long = 30,
-    private val timeoutUnit: TimeUnit = TimeUnit.SECONDS
+    private val timeoutUnit: TimeUnit = TimeUnit.SECONDS,
+    private val checkVersion: Boolean = version != -1
 ) : ChannelInitializer<SocketChannel>() {
 
     override fun initChannel(ch: SocketChannel) {
@@ -31,7 +32,7 @@ class Js5ChannelInitializer(
             //addLast(FLOW_CONTROL_HANDLER, FlowControlHandler())
             addLast(
                 HANDLER, InitHandler(
-                    config.version, config.checkVersion,
+                    version, checkVersion,
                     groupRepository
                 )
             )

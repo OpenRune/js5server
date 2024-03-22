@@ -5,11 +5,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class Js5Service(
-    config: Js5ServiceConfig,
+    version: Int,
     groupRepository: Js5GroupRepository,
 
     bootstrapFactory: BootstrapFactory = Js5ServerBootstrapFactory(
-        Js5ChannelInitializer(config, groupRepository)
+        Js5ChannelInitializer(version, groupRepository)
     )
 ) : AutoCloseable {
 

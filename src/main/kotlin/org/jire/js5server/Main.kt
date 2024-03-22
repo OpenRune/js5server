@@ -9,27 +9,16 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val props = Properties().apply {
-            FileInputStream("js5server.properties").use {
-                load(it)
-            }
+        val cachePath = args[0]
+
+        val ports = args[1].split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val listenPorts = IntArray(ports.size)
+        for (i in ports.indices) {
+            listenPorts[i] = ports[i].trim { it <= ' ' }.toInt()
         }
-        val config = Js5ServiceConfig(props)
+        val version = args[2].toInt()
+        val supportPrefetch = args[3].toBoolean()
 
-        val groupRepository =
-            (Class.forName(config.groupRepository).getDeclaredConstructor().newInstance() as Js5GroupRepository).apply {
-                load(Path.of(config.cachePath))
-            }
-
-        val service = Js5Service(config, groupRepository)
-
-        for (port in config.listenPorts) {
-            service.listen(port)
-        }
-
-        if (config.supportPrefetch) {
-            Js5Handler.startPrefetching()
-        }
+        Js5Server.init(cachePath, listenPorts, version, supportPrefetch)
     }
-
 }

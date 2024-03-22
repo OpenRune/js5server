@@ -1,16 +1,16 @@
 plugins {
-    kotlin("jvm")
+    kotlin("jvm").version("1.9.23")
     application
-    id("com.github.johnrengelman.shadow")
-
     `maven-publish`
-    signing
-    id("io.github.gradle-nexus.publish-plugin")
 }
 
-group = "org.jire"
-version = "1.0.2"
+group = "dev.openrune"
+version = "1.0.0"
 description = "fast simple JS5 server"
+
+repositories {
+    mavenCentral()
+}
 
 application {
     mainClass.set("org.jire.js5server.Main")
@@ -24,6 +24,16 @@ application {
         "-XX:MaxGCPauseMillis=100",
 
         "-Dio.netty.tryReflectionSetAccessible=true", // allow Netty to use direct buffer optimizations
+        "-D data/cache 443,43594,50000 211 true"
+    )
+}
+
+tasks.named("run", JavaExec::class) {
+    args = listOf(
+        "data/cache",
+        "443,43594,50000",
+        "211",
+        "true"
     )
 }
 
@@ -44,94 +54,37 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("org.jctools:jctools-core:4.0.3")
 
-    for (module in listOf("buffer", "cache"))
-        implementation("org.openrs2:openrs2-$module:0.1.0-SNAPSHOT")
+    implementation("com.displee:rs-cache-library:7.1.0")
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
-java {
-    withJavadocJar()
-    withSourcesJar()
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
 }
 
 publishing {
-/*    repositories {
-        maven {
-            val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
-
-            val ossrhUsername = providers.environmentVariable("OSSRH_USERNAME")
-            val ossrhPassword = providers.environmentVariable("OSSRH_PASSWORD")
-            if (ossrhUsername.isPresent && ossrhPassword.isPresent) {
-                credentials {
-                    username = ossrhUsername.get()
-                    password = ossrhPassword.get()
-                }
-            }
-        }
-    }*/
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-
-            pom {
-                name = rootProject.name
-                description = rootProject.description
-                url = "https://github.com/Jire/js5server"
-                packaging = "jar"
-                licenses {
-                    license {
-                        name = "MIT License"
-                        url = "https://github.com/Jire/js5server/blob/main/LICENSE.txt"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "Jire"
-                        name = "Thomas Nappo"
-                        email = "thomasgnappo@gmail.com"
-                    }
-                }
-                scm {
-                    connection = "scm:git:git://github.com/Jire/js5server.git"
-                    developerConnection = "scm:git:ssh://git@github.com/Jire/js5server.git"
-                    url = "https://github.com/Jire/js5server"
-                }
-            }
-        }
-    }
-}
-
-signing {
-    sign(publishing.publications["mavenJava"])
-}
-
-nexusPublishing {
     repositories {
-        sonatype {
-            if (false) { // only for users registered in Sonatype after 24 Feb 2021
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            }
-
-            val ossrhUsername = providers.environmentVariable("OSSRH_USERNAME")
-            val ossrhPassword = providers.environmentVariable("OSSRH_PASSWORD")
-            if (ossrhUsername.isPresent && ossrhPassword.isPresent) {
-                username.set(ossrhUsername.get())
-                password.set(ossrhPassword.get())
+        maven {
+            url = uri("$buildDir/repo")
+        }
+        if (System.getenv("REPO_URL") != null) {
+            maven {
+                url = uri(System.getenv("REPO_URL"))
+                credentials {
+                    username = System.getenv("REPO_USERNAME")
+                    password = System.getenv("REPO_PASSWORD")
+                }
             }
         }
     }
-}
-
-// do not generate extra load on Nexus with new staging repository if signing fails
-val initializeSonatypeStagingRepository by tasks.existing
-subprojects {
-    initializeSonatypeStagingRepository {
-        shouldRunAfter(tasks.withType<Sign>())
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["java"])
+            artifact(sourcesJar.get())
+        }
     }
 }
