@@ -21,8 +21,8 @@ class DispleeJs5GroupRepository : Js5GroupRepository {
 
     override fun load(path: Path) {
         val cache = CacheLibrary(path.toString())
-         val versionTable = cache.generateUkeys(false)
-            encodeMasterIndex(versionTable)
+
+        encodeMasterIndex(cache)
 
         for(test in cache.indices()) {
             encodeArchive(cache, test.id)
@@ -32,23 +32,35 @@ class DispleeJs5GroupRepository : Js5GroupRepository {
         logger.info("Loaded {} JS5 responses", map.size)
     }
 
-    private fun encodeMasterIndex(masterIndex: ByteArray) {
-        Unpooled.directBuffer().use { uncompressed ->
-            uncompressed.writeBytes(masterIndex)
+    private fun encodeMasterIndex(cache: CacheLibrary) {
+        Unpooled.directBuffer().use { output ->
+            output.writeByte(0)
 
-            val data = compress(uncompressed)
-            encodeGroup(255, 255, data)
+            val highestIndex = cache.indices().maxOf { it.id }
+            val indices = cache.indices()
+
+            output.writeInt(8 + highestIndex * 8)
+
+            for (id in 0..highestIndex) {
+                val index = indices.find { it.id == id }
+
+                if (index != null) {
+                    output.writeInt(index.crc).writeInt(index.revision)
+                } else {
+                    output.writeLong(0)
+                }
+            }
+
+            encodeGroup(255, 255, output)
         }
     }
 
     private fun encodeArchiveMasterIndex(cache: CacheLibrary, index: Int) {
         for (archive in cache.indices()) {
             if (archive.id == 255) continue// this is the prebuilt versiontable.
+            val data = cache.index255?.readArchiveSector(archive.id)?.data ?: continue
 
             Unpooled.directBuffer().use { uncompressed ->
-
-                val data = cache.index255?.readArchiveSector(archive.id)?.data
-
                 uncompressed.writeBytes(data)
                 encodeGroup(index, archive.id, uncompressed)
             }
@@ -57,10 +69,9 @@ class DispleeJs5GroupRepository : Js5GroupRepository {
 
     private fun encodeArchive(cache: CacheLibrary, index: Int) {
         for (archive in cache.index(index).archives()) {
+            val data = cache.index(index).readArchiveSector(archive.id)?.data ?: continue
+
             Unpooled.directBuffer().use { uncompressed ->
-
-                val data = cache.index(index).readArchiveSector(archive.id)?.data
-
                 uncompressed.writeBytes(data)
                 strip(uncompressed)
                 encodeGroup(index, archive.id, uncompressed)
@@ -81,16 +92,6 @@ class DispleeJs5GroupRepository : Js5GroupRepository {
 
         val bitpack = bitpack(archive, group)
         map[bitpack] = response
-    }
-
-    private fun compress(input: ByteBuf): ByteBuf {
-        input.alloc().buffer().use { output ->
-            output.writeByte(0)
-            val len = input.readableBytes()
-            output.writeInt(len)
-            output.writeBytes(input)
-            return output.retain()
-        }
     }
 
     private fun strip(buf: ByteBuf): Int? {
