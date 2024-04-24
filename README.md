@@ -11,11 +11,17 @@ Configure with `js5server.properties` file.
 In `build.gradle.kts` (Kotlin)
 
 ```kotlin
-implementation("org.jire:js5server:1.0.1")
+implementation("dev.openrune:js5server:1.0.4")
 ```
 
 Or in `build.gradle` (Groovy)
 
 ```groovy
-implementation 'org.jire:js5server:1.0.1'
+implementation 'dev.openrune:js5server:1.0.4'
+```
+
+You will also need to declare the following under your repositories to add the maven remote
+
+```kotlin
+   maven("https://raw.githubusercontent.com/OpenRune/hosting/master")
 ```
