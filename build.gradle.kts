@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.openrune"
-version = "1.0.4"
+version = "1.0.5"
 description = "fast simple JS5 server"
 
 repositories {
@@ -54,7 +54,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("org.jctools:jctools-core:4.0.3")
 
-    implementation("com.displee:rs-cache-library:7.1.0")
+    implementation("com.displee:rs-cache-library:7.1.3")
 }
 
 kotlin {
