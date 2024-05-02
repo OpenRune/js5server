@@ -15,6 +15,7 @@ import org.jire.js5server.Js5GroupRepository
 import org.jire.js5server.PipelineConstants.HANDLER
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.nio.channels.ClosedChannelException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -109,7 +110,7 @@ class Js5Handler(
 
     @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-        logger.error("Exception in JS5", cause)
+        if (logger.isErrorEnabled && cause !is ClosedChannelException) logger.error("Exception in JS5", cause)
     }
 
     companion object {
