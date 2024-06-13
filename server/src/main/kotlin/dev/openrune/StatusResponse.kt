@@ -1,4 +1,4 @@
-package org.jire.js5server
+package dev.openrune
 
 enum class StatusResponse(val opcode: Int) {
     SUCCESSFUL(0),

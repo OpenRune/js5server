@@ -1,4 +1,4 @@
-package org.jire.js5server
+package dev.openrune
 
 import com.displee.cache.CacheLibrary
 import io.netty.buffer.ByteBuf
@@ -6,7 +6,7 @@ import io.netty.buffer.Unpooled
 import io.netty.util.ReferenceCounted
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import org.jire.js5server.Js5GroupRepository.Companion.bitpack
+import dev.openrune.Js5GroupRepository.Companion.bitpack
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Path

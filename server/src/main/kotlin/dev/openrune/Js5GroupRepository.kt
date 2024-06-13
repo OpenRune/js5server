@@ -1,4 +1,4 @@
-package org.jire.js5server
+package dev.openrune
 
 import io.netty.buffer.ByteBuf
 import java.nio.file.Path
