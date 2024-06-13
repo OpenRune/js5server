@@ -41,6 +41,7 @@ dependencies {
 
     implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.25.Final")
 
+    implementation("it.unimi.dsi:fastutil:8.5.13")
 
     implementation("com.displee:rs-cache-library:7.1.3")
 }

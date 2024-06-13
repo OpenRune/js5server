@@ -30,6 +30,10 @@ object Js5Server {
         supportPrefetch: Boolean = true
     ) {
 
+        val groupRepository = DispleeJs5GroupRepository().apply {
+            load(Path.of(cachePath))
+        }
+
         val bossGroup = NioEventLoopGroup()
         val loopGroup = NioEventLoopGroup()
         try {
@@ -44,7 +48,7 @@ object Js5Server {
                         channel.pipeline().addLast(ServiceDecoder::class.qualifiedName, ServiceDecoder())
                         channel.pipeline().addLast(
                             ServiceHandler::class.qualifiedName,
-                            ServiceHandler(cachePath,version)
+                            ServiceHandler(groupRepository,version)
                         )
                     }
                 })

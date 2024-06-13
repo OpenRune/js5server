@@ -6,7 +6,7 @@ import io.netty.channel.ChannelPipeline
 import java.io.IOException
 
 class ServiceHandler(
-    private val path : String,
+    private val repository: Js5GroupRepository,
     private val currentRevision: Int,
 ) : PacketInboundHandler<ConnectionRequest>() {
     override fun channelRead0(ctx: ChannelHandlerContext, msg: ConnectionRequest) {
@@ -34,7 +34,7 @@ class ServiceHandler(
 
     private fun ChannelPipeline.swapToJs5() {
         replace(ServiceDecoder::class.qualifiedName, Js5Decoder::class.qualifiedName, Js5Decoder())
-        replace(ServiceHandler::class.qualifiedName, Js5Handler::class.qualifiedName, Js5Handler(CacheLibrary.create(path)))
+        replace(ServiceHandler::class.qualifiedName, Js5Handler::class.qualifiedName, Js5Handler(repository))
         replace(StatusEncoder::class.qualifiedName, Js5Encoder::class.qualifiedName, Js5Encoder())
     }
 }
