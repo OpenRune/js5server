@@ -57,6 +57,9 @@ object Js5Server {
             val bind = bootstrap.bind(listenPorts.first()).sync().addListener {
                 if (it.isSuccess) {
                     logger.info("Server now listening to port $port")
+                    if (version == -1) {
+                        logger.info("JS5 Revision is -1 Ignoring version check")
+                    }
                 } else {
                     logger.error("Server failed to connect to port $port",it.cause())
                 }

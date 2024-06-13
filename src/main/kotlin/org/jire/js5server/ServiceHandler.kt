@@ -16,7 +16,7 @@ class ServiceHandler(
                 "GameConnectionRequest Not Supported."
             )
             is Js5ConnectionRequest -> {
-                if (msg.revision != currentRevision) {
+                if (msg.revision != currentRevision && currentRevision != -1) {
                     ctx.writeAndFlush(StatusResponse.OUT_OF_DATE)
                     throw IOException(
                         "Revision handshake failed, expected revision $currentRevision but got ${msg.revision}."
