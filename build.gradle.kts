@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.openrune"
-version = "1.0.5"
+version = "1.0.6"
 description = "fast simple JS5 server"
 
 repositories {
@@ -58,7 +58,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 }
 
 val sourcesJar by tasks.registering(Jar::class) {

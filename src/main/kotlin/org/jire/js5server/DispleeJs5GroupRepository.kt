@@ -30,6 +30,7 @@ class DispleeJs5GroupRepository : Js5GroupRepository {
         encodeArchiveMasterIndex(cache, 255)
 
         logger.info("Loaded {} JS5 responses", map.size)
+        cache.close()
     }
 
     private fun encodeMasterIndex(cache: CacheLibrary) {
