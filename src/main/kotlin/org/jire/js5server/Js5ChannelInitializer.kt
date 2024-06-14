@@ -30,12 +30,7 @@ class Js5ChannelInitializer(
             addLast(DECODER, InitDecoder())
             addLast(ENCODER, InitEncoder())
             //addLast(FLOW_CONTROL_HANDLER, FlowControlHandler())
-            addLast(
-                HANDLER, InitHandler(
-                    version, checkVersion,
-                    groupRepository
-                )
-            )
+            addLast(HANDLER, InitHandler(version, checkVersion, groupRepository))
         }
     }
 

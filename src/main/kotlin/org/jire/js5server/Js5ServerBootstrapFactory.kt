@@ -12,7 +12,7 @@ class Js5ServerBootstrapFactory(
 
     private val allocator: ByteBufAllocator = ByteBufAllocator.DEFAULT,
 
-    private val autoRead: Boolean = false,
+    private val autoRead: Boolean = true,
     private val tcpNoDelay: Boolean = true,
     private val connectTimeoutMillis: Int = 30_000,
 

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
 import io.netty.handler.codec.DecoderException
+import org.jire.js5server.Js5Type
 
 class Js5Decoder : ByteToMessageDecoder() {
 
@@ -11,29 +12,23 @@ class Js5Decoder : ByteToMessageDecoder() {
         if (!input.isReadable(TOTAL_LENGTH)) return
 
         when (val opcode = input.readUnsignedByte().toInt()) {
-            0 -> {
+            Js5Type.NORMAL_CONTAINER_REQUEST.opcode,Js5Type.URGENT_CONTAINER_REQUEST.opcode -> {
                 val archive = input.readUnsignedByte().toInt()
                 val group = input.readUnsignedShort()
-                out += Js5Request.Group.Prefetch(archive, group)
+                out += Js5Request.Group.Request(archive, group, opcode == Js5Type.URGENT_CONTAINER_REQUEST.opcode)
             }
 
-            1 -> {
-                val archive = input.readUnsignedByte().toInt()
-                val group = input.readUnsignedShort()
-                out += Js5Request.Group.OnDemand(archive, group)
-            }
+            Js5Type.CLIENT_LOGGED_IN.opcode -> Js5Request.LoggedIn.skipped(input, out)
+            Js5Type.CLIENT_LOGGED_OUT.opcode -> Js5Request.LoggedOut.skipped(input, out)
 
-            2 -> Js5Request.LoggedIn.skipped(input, out)
-            3 -> Js5Request.LoggedOut.skipped(input, out)
-
-            4 -> {
+            Js5Type.ENCRYPTION_KEY_UPDATE.opcode -> {
                 val key = input.readUnsignedByte().toInt()
                 input.skipBytes(2)
                 out += Js5Request.Rekey(key)
             }
 
-            5 -> Js5Request.Connected.skipped(input, out)
-            6 -> Js5Request.Disconnected.skipped(input, out)
+            Js5Type.CONNECTED.opcode -> Js5Request.Connected.skipped(input, out)
+            Js5Type.DISCONNECTED.opcode -> Js5Request.Disconnected.skipped(input, out)
 
             else -> throw DecoderException("Unsupported JS5 opcode: $opcode")
         }

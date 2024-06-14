@@ -15,6 +15,7 @@ import org.jire.js5server.Js5GroupRepository
 import org.jire.js5server.PipelineConstants.HANDLER
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.SocketException
 import java.nio.channels.ClosedChannelException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -28,7 +29,7 @@ class Js5Handler(
     private lateinit var prefetchQueue: MessagePassingQueue<ByteBuf>
     private lateinit var onDemandQueue: MessagePassingQueue<ByteBuf>
 
-    private var loggedIn = false
+    private var loginState = LoginState.LOGGED_OUT
 
     override fun handlerAdded(ctx: ChannelHandlerContext) {
         prefetchQueue = newMessagePassingQueue(QUEUE_CAPACITY, needsThreadSafety)
@@ -41,29 +42,21 @@ class Js5Handler(
 
     override fun channelRead0(ctx: ChannelHandlerContext, msg: Js5Request) {
         when (msg) {
-            is Js5Request.Group.Prefetch -> {
+            is Js5Request.Group -> {
                 val response = groupRepository[msg.archive, msg.group]
                     ?: throw DecoderException("Invalid prefetch group request ($msg)")
 
-                if (!prefetchQueue.offer(response))
-                    throw IllegalStateException("Filled prefetch queue ($msg)")
+                if (msg.highPriority) {
+                    if (!onDemandQueue.offer(response))
+                        throw IllegalStateException("Filled on-demand queue ($msg)")
+                } else {
+                    if (!prefetchQueue.offer(response))
+                        throw IllegalStateException("Filled prefetch queue ($msg)")
+                }
             }
 
-            is Js5Request.Group.OnDemand -> {
-                val response = groupRepository[msg.archive, msg.group]
-                    ?: throw DecoderException("Invalid on-demand group request ($msg)")
-
-                if (!onDemandQueue.offer(response))
-                    throw IllegalStateException("Filled on-demand queue ($msg)")
-            }
-
-            Js5Request.LoggedIn -> {
-                loggedIn = true
-            }
-
-            Js5Request.LoggedOut -> {
-                loggedIn = false
-            }
+            Js5Request.LoggedIn -> loginState = LoginState.LOGGED_IN
+            Js5Request.LoggedOut -> loginState = LoginState.LOGGED_OUT
 
             else -> {}
         }
@@ -74,7 +67,7 @@ class Js5Handler(
 
         val channel = ctx.channel()
         if (!channel.isWritable) {
-            channel.config().isAutoRead = false
+            channel.config().isAutoRead = true
         }
     }
 
@@ -110,7 +103,7 @@ class Js5Handler(
 
     @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-        if (logger.isErrorEnabled && cause !is ClosedChannelException) logger.error("Exception in JS5", cause)
+        if (logger.isErrorEnabled && cause !is ClosedChannelException && cause !is SocketException) logger.error("Exception in JS5", cause)
     }
 
     companion object {
