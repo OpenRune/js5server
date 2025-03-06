@@ -15,7 +15,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("org.jctools:jctools-core:4.0.3")
 
-    implementation("com.displee:rs-cache-library:7.1.3")
+    implementation("com.displee:rs-cache-library:7.2.0")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
