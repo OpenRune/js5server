@@ -9,8 +9,16 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val cachePath = args[0]
 
+        val ports = args[1].split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val listenPorts = IntArray(ports.size)
+        for (i in ports.indices) {
+            listenPorts[i] = ports[i].trim { it <= ' ' }.toInt()
+        }
+        val version = args[2].toInt()
+        val supportPrefetch = args[3].toBoolean()
 
-        Js5Server.init("E:\\RSPS\\VarlamoreRSPS\\Varlamore-Server\\data\\cache\\")
+        Js5Server.init(cachePath, listenPorts, version, supportPrefetch)
     }
 }
