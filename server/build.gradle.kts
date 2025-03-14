@@ -15,7 +15,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("org.jctools:jctools-core:4.0.3")
 
-    implementation("com.displee:rs-cache-library:7.2.0")
+    implementation("dev.or2:displee:2.0.4")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
@@ -23,10 +23,12 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
 }
 
+val buildDirectory = System.getenv("HOSTING_DIRECTORY") ?: "K:\\documents\\GitHub\\hosting\\"
+
 publishing {
     repositories {
         maven {
-            url = uri("$buildDir/repo")
+            url = uri(buildDirectory)
         }
     }
     publications {
