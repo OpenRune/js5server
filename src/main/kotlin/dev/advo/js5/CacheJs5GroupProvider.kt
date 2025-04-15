@@ -20,8 +20,7 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
 
     private val groups: MutableMap<Int, ByteBuf> = HashMap(2.toDouble().pow(17).toInt())
 
-    public fun load(path: String) {
-        val cache = Cache.load(Path.of(path), false)
+    public fun load(cache: Cache) {
         encodeMasterIndex(cache)
 
         for (index in cache.indices()) {

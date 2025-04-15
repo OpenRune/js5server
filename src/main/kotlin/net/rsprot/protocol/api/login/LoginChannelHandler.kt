@@ -1,6 +1,7 @@
 package net.rsprot.protocol.api.login
 
 import com.github.michaelbull.logging.InlineLogger
+import dev.advo.js5.Js5Server
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -80,7 +81,7 @@ public class LoginChannelHandler(
         revision: Int,
         seed: IntArray,
     ) {
-        if (revision != RSProtConstants.REVISION) {
+        if (revision != Js5Server.REVISION) {
             networkLog(logger) {
                 "Invalid JS5 revision received from channel '${ctx.channel()}': $revision"
             }

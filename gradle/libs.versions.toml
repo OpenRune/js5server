@@ -13,7 +13,7 @@ dokka = "1.9.20"
 mavenpublish = "0.28.0"
 konsist = "0.14.0"
 rsprot = "1.0.0-ALPHA-20250328"
-openrune = "2.0.10"
+openrune = "2.0.13"
 
 [libraries]
 netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }

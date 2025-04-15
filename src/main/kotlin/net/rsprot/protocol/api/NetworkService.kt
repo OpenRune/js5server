@@ -1,6 +1,7 @@
 package net.rsprot.protocol.api
 
 import com.github.michaelbull.logging.InlineLogger
+import dev.advo.js5.Js5Server
 import io.netty.buffer.ByteBufAllocator
 import io.netty.channel.ChannelFuture
 import io.netty.channel.EventLoopGroup
@@ -119,7 +120,7 @@ public class NetworkService
                 }
             logger.info { "Started in: $time" }
             logger.info { "Bound to ports: ${ports.joinToString(", ")}" }
-            logger.info { "Revision: ${RSProtConstants.REVISION}" }
+            logger.info { "Revision: ${Js5Server.REVISION}" }
         }
 
         public fun shutdown() {
