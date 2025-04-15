@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.util.ReferenceCounted
 import net.rsprot.protocol.api.js5.Js5GroupProvider
+import org.openrs2.cache.Store
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -26,9 +27,9 @@ class DispleeJs5GroupRepository : Js5GroupProvider {
         encodeMasterIndex(cache)
 
         for(test in cache.indices()) {
-            encodeArchive(cache, test.id)
+            encodeArchive(cache.store, test.id)
         }
-        encodeArchiveMasterIndex(cache, 255)
+        encodeArchiveMasterIndex(cache.store)
 
         logger.info("Loaded {} JS5 responses", groups.size)
         cache.close()
@@ -57,15 +58,14 @@ class DispleeJs5GroupRepository : Js5GroupProvider {
         }
     }
 
-    private fun encodeArchiveMasterIndex(cache: CacheLibrary, index: Int) {
-        for (archive in cache.indices()) {
-            if (archive.id == 255) continue// this is the prebuilt versiontable.
+    private fun encodeArchiveMasterIndex(store: Store) {
+        for (archive in store.list(255)) {
             try {
-                val data = cache.store.read(255, archive.id)
+                val data = store.read(255, archive)
 
                 Unpooled.directBuffer().use { uncompressed ->
                     uncompressed.writeBytes(data)
-                    encodeGroup(index, archive.id, uncompressed)
+                    encodeGroup(255, archive, uncompressed)
                 }
             } catch (e: Exception) {
                 continue
@@ -73,14 +73,14 @@ class DispleeJs5GroupRepository : Js5GroupProvider {
         }
     }
 
-    private fun encodeArchive(cache: CacheLibrary, index: Int) {
-        for (archive in cache.index(index).archives()) {
+    private fun encodeArchive(store: Store, index: Int) {
+        for (archive in store.list(index)) {
             try {
-                val data = cache.store.read(index, archive.id)
+                val data = store.read(index, archive)
                 Unpooled.directBuffer().use { uncompressed ->
                     uncompressed.writeBytes(data)
                     strip(uncompressed)
-                    encodeGroup(index, archive.id, uncompressed)
+                    encodeGroup(index, archive, uncompressed)
                 }
             } catch (e: Exception) {
                 continue
