@@ -13,7 +13,7 @@ dokka = "1.9.20"
 mavenpublish = "0.28.0"
 konsist = "0.14.0"
 rsprot = "1.0.0-ALPHA-20250328"
-openrune = "2.0.10"
+openrune = "2.0.99"
 
 [libraries]
 netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }
@@ -50,6 +50,7 @@ rsprot-osrs229-desktop = { module = "net.rsprot:osrs-229-desktop", version.ref =
 rsprot-osrs229-shared = { module = "net.rsprot:osrs-229-shared", version.ref = "rsprot" }
 
 openrune-filesystem = { module = "dev.or2:filesystem", version.ref = "openrune" }
+openrune-displee = { module = "dev.or2:displee", version.ref = "openrune" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

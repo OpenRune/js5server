@@ -10,7 +10,7 @@ import net.rsprot.protocol.api.js5.Js5GroupProvider
 import java.io.IOException
 
 public class NetworkServiceFactory(
-    public val groupProvider: CacheJs5GroupProvider,
+    public val groupProvider: Js5GroupProvider,
     override val ports: List<Int>,
 ) : AbstractNetworkServiceFactory() {
 

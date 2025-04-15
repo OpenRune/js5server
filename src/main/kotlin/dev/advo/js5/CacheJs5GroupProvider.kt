@@ -18,7 +18,7 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
         return groups[bitpack(archive, group)]
     }
 
-    private val groups: MutableMap<Int, ByteBuf> = HashMap(2.toDouble().pow(17).toInt())
+    val groups: MutableMap<Int, ByteBuf> = HashMap(2.toDouble().pow(17).toInt())
 
     public fun load(path: String) {
         val cache = Cache.load(Path.of(path), false)

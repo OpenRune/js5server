@@ -7,11 +7,14 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://raw.githubusercontent.com/OpenRune/hosting/master")
 }
 
 dependencies {
     implementation(rootProject.libs.openrune.filesystem)
+    implementation(rootProject.libs.openrune.displee)
+
     implementation(platform(rootProject.libs.netty.bom))
     api(rootProject.libs.netty.buffer)
     implementation(rootProject.libs.netty.transport)
