@@ -1,9 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "1.9.23"
+    id("maven-publish")
 }
 
 group = "dev.openrune"
-version = "1.0-SNAPSHOT"
+version = "2.1"
+val buildDirectory = "E:\\RSPS\\OpenRune\\hosting"
 
 repositories {
     mavenCentral()
@@ -49,4 +51,58 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(11)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            artifactId = "js5server"
+
+            pom {
+                name.set("OpenRune - ${project.name}")
+                description.set("Module ${project.name} of the OpenRune project.")
+                url.set("https://github.com/OpenRune")
+
+                licenses {
+                    license {
+                        name.set("Apache-2.0")
+                        url.set("https://opensource.org/licenses/Apache-2.0")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("openrune")
+                        name.set("OpenRune Team")
+                        email.set("contact@openrune.dev")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:git://github.com/OpenRune.git")
+                    developerConnection.set("scm:git:ssh://github.com/OpenRune.git")
+                    url.set("https://github.com/OpenRune")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri(buildDirectory)
+        }
+    }
+}
+
+
+plugins.withType<MavenPublishPlugin> {
+    configure<PublishingExtension> {
+        publications.withType<MavenPublication> {
+            groupId = "dev.openrune"
+            artifactId = "js5server"
+            version = version
+        }
+    }
 }

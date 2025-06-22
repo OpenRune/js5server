@@ -1,10 +1,10 @@
 [versions]
 kotlin = "1.9.23"
-netty = "4.1.109.Final"
+netty = "4.1.107.Final"
 netty-iouring = "0.0.25.Final"
 junit = "5.10.2"
 jmh = "0.4.10"
-inlinelogger = "1.0.6"
+inlinelogger = "1.0.3"
 log4j = "2.23.1"
 commons-pool2 = "2.12.0"
 ktlint = "12.1.0"
@@ -13,7 +13,7 @@ dokka = "1.9.20"
 mavenpublish = "0.28.0"
 konsist = "0.14.0"
 rsprot = "1.0.0-ALPHA-20250328"
-openrune = "2.0.13"
+openrune = "2.1"
 
 [libraries]
 netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }
