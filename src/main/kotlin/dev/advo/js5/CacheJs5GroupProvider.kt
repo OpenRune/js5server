@@ -120,9 +120,9 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
             group: Int,
         ): Int {
             require(archive and 0xFF.inv() == 0) { "invalid archive $archive:$group" }
-            require(group and 0xFFFF.inv() == 0) { "invalid group $archive:$group" }
+            require(group and 0xFFFFFF.inv() == 0) { "invalid group $archive:$group" }
 
-            return ((archive and 0xFF) shl 16) or (group and 0xFFFF)
+            return ((archive and 0xFF) shl 24) or (group and 0xFFFFFF)
         }
     }
 }
