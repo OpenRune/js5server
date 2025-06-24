@@ -74,7 +74,7 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
         val response =
             Unpooled.directBuffer()
                 .writeByte(archive)
-                .writeShort(group)
+                .writeMedium(group)
                 .writeByte(data.readUnsignedByte().toInt()) // compression
                 .writeBytes(data, min(data.readableBytes(), BYTES_BEFORE_BLOCK))
         while (data.isReadable) {
@@ -107,7 +107,7 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
 
     private companion object {
         private const val BLOCK_SIZE = 512
-        private const val BLOCK_HEADER_SIZE = 1 + 2 + 1
+        private const val BLOCK_HEADER_SIZE = 1 + 3 + 1
         private const val BLOCK_DELIMITER_SIZE = 1
         private const val BYTES_BEFORE_BLOCK = BLOCK_SIZE - BLOCK_HEADER_SIZE
         private const val BYTES_AFTER_BLOCK = BLOCK_SIZE - BLOCK_DELIMITER_SIZE
