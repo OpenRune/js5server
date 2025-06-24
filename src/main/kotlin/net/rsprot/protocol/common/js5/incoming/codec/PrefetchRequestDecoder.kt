@@ -1,5 +1,6 @@
 package net.rsprot.protocol.common.js5.incoming.codec
 
+import dev.advo.js5.Js5GroupId
 import net.rsprot.buffer.JagByteBuf
 import net.rsprot.protocol.ClientProt
 import net.rsprot.protocol.common.js5.incoming.prot.Js5ClientProt
@@ -11,10 +12,12 @@ public class PrefetchRequestDecoder : MessageDecoder<PrefetchRequest> {
 
     override fun decode(buffer: JagByteBuf): PrefetchRequest {
         val archiveId = buffer.g1()
-        val groupId = buffer.g2()
+        val groupId = buffer.g3()
         return PrefetchRequest(
-            archiveId.toUByte(),
-            groupId.toUShort(),
+            Js5GroupId.from(
+                archiveId,
+                groupId
+            )
         )
     }
 }
