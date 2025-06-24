@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.util.ReferenceCounted
 import net.rsprot.protocol.api.js5.Js5GroupProvider
-import java.nio.file.Path
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -15,10 +14,10 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
         archive: Int,
         group: Int,
     ): ByteBuf? {
-        return groups[bitpack(archive, group)]
+        return groups[Js5GroupId.from(archive, group)]
     }
 
-    private val groups: MutableMap<Int, ByteBuf> = HashMap(2.toDouble().pow(17).toInt())
+    private val groups: MutableMap<Js5GroupId, ByteBuf> = HashMap(2.toDouble().pow(17).toInt())
 
     public fun load(cache: Cache) {
         encodeMasterIndex(cache)
@@ -83,7 +82,7 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
             response.writeBytes(data, min(data.readableBytes(), BYTES_AFTER_BLOCK))
         }
 
-        val bitpack = bitpack(archive, group)
+        val bitpack = Js5GroupId.from(archive, group)
         groups[bitpack] = Unpooled.unreleasableBuffer(response)
     }
 
@@ -114,15 +113,5 @@ public class CacheJs5GroupProvider : Js5GroupProvider {
         private const val BYTES_AFTER_BLOCK = BLOCK_SIZE - BLOCK_DELIMITER_SIZE
 
         private val logger = InlineLogger()
-
-        fun bitpack(
-            archive: Int,
-            group: Int,
-        ): Int {
-            require(archive and 0xFF.inv() == 0) { "invalid archive $archive:$group" }
-            require(group and 0xFFFFFF.inv() == 0) { "invalid group $archive:$group" }
-
-            return ((archive and 0xFF) shl 24) or (group and 0xFFFFFF)
-        }
     }
 }
