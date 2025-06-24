@@ -1,6 +1,7 @@
 package net.rsprot.protocol.api.js5
 
 import com.github.michaelbull.logging.InlineLogger
+import dev.advo.js5.Js5GroupId
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import net.rsprot.protocol.api.NetworkService
@@ -67,8 +68,9 @@ public class Js5Client(
             if (request == -1) {
                 return null
             }
-            val archiveId = request ushr 16
-            val groupId = request and 0xFFFF
+            val jsGroupId = Js5GroupId(request)
+            val archiveId = jsGroupId.archiveId
+            val groupId = jsGroupId.groupId
             js5Log(logger) {
                 "Assigned next request block: $archiveId:$groupId"
             }
@@ -197,8 +199,9 @@ public class Js5Client(
             if (next == -1) {
                 break
             }
-            val archiveId = next ushr 16
-            val groupId = next and 0xFFFF
+            val jsGroupId = Js5GroupId(next)
+            val archiveId = jsGroupId.archiveId
+            val groupId = jsGroupId.groupId
             val size = groupProvider.provide(archiveId, groupId)?.readableBytes() ?: 0
             prefetch.addLast(next)
             transferredBytes += size
