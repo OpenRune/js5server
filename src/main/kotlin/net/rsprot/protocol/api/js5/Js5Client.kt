@@ -142,7 +142,7 @@ public class Js5Client(
      * @param request the request to add to this client
      */
     public fun push(request: Js5GroupRequest) {
-        val bitpacked = request.bitpacked
+        val bitpacked = request.request.bitpacked
         if (request is UrgentRequest) {
             prefetch.remove(bitpacked)
             awaitingPrefetch.remove(bitpacked)

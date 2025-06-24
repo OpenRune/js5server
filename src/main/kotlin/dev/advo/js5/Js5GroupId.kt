@@ -3,11 +3,14 @@ package dev.advo.js5
 @JvmInline
 value class Js5GroupId(private val packed: Int) {
 
-    val archive: Int
+    val archiveId: Int
         get() = (packed ushr 24) and 0xFF
 
-    val group: Int
+    val groupId: Int
         get() = packed and 0xFFFFFF
+
+    val bitpacked: Int
+        get() = packed
 
     companion object {
         fun from(archive: Int, group: Int): Js5GroupId {
@@ -18,5 +21,5 @@ value class Js5GroupId(private val packed: Int) {
         }
     }
 
-    override fun toString(): String = "Js5GroupId(archive=$archive, group=$group)"
+    override fun toString(): String = "Js5GroupId(archiveId=$archiveId, groupId=$groupId)"
 }
