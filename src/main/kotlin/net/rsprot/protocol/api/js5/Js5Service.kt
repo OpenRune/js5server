@@ -273,22 +273,28 @@ public class Js5Service(
          * by splitting the payload up into chunks of 512 bytes, which each have a 0xFF
          * terminator splitting them.
          * @param archive the archive id, written as a byte at the start
-         * @param group the group id, written as a short at the start
+         * @param group the group id, written depending on [extendedResponses] at the start
          * @param input the input byte buffer from the cache, with version information
          * stripped off
          * @param output the output byte buffer into which to write the split-up JS5 buffers.
+         * @param extendedResponses whether to encode the group as a medium (true) or short (false).
          */
         public fun prepareJs5Buffer(
             archive: Int,
             group: Int,
             input: ByteBuf,
             output: ByteBuf,
+            extendedResponses: Boolean
         ) {
             val readableBytes = input.readableBytes()
             output.writeByte(archive)
-            output.writeShort(group)
-            // Block length - 3 as we already wrote 3 bytes at the start
-            val len = min(readableBytes, BLOCK_LENGTH - 3)
+            if(extendedResponses)
+                output.writeMedium(group)
+            else
+                output.writeShort(group)
+            // We need to subtract some bytes to account for the header above.
+            val headerLen = BLOCK_LENGTH - (if (extendedResponses) 4 else 3)
+            val len = min(readableBytes, headerLen)
             output.writeBytes(input, 0, len)
 
             var offset = len
