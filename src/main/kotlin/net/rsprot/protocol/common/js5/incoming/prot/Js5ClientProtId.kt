@@ -6,4 +6,6 @@ internal object Js5ClientProtId {
     const val PRIORITY_CHANGE_HIGH = 2
     const val PRIORITY_CHANGE_LOW = 3
     const val XOR_CHANGE = 4
+    const val PREFETCH_REQUEST_EXT = 5
+    const val URGENT_REQUEST_EXT = 6
 }

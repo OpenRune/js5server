@@ -12,7 +12,7 @@ public class UrgentRequestDecoder : MessageDecoder<UrgentRequest> {
 
     override fun decode(buffer: JagByteBuf): UrgentRequest {
         val archiveId = buffer.g1()
-        val groupId = buffer.g3()
+        val groupId = buffer.g2()
         return UrgentRequest(
             Js5GroupId.from(
                 archiveId,

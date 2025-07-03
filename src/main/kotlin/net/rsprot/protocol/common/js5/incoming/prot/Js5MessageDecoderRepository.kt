@@ -2,9 +2,11 @@ package net.rsprot.protocol.common.js5.incoming.prot
 
 import net.rsprot.protocol.ProtRepository
 import net.rsprot.protocol.common.js5.incoming.codec.PrefetchRequestDecoder
+import net.rsprot.protocol.common.js5.incoming.codec.PrefetchRequestExtDecoder
 import net.rsprot.protocol.common.js5.incoming.codec.PriorityChangeHighDecoder
 import net.rsprot.protocol.common.js5.incoming.codec.PriorityChangeLowDecoder
 import net.rsprot.protocol.common.js5.incoming.codec.UrgentRequestDecoder
+import net.rsprot.protocol.common.js5.incoming.codec.UrgentRequestExtDecoder
 import net.rsprot.protocol.common.js5.incoming.codec.XorChangeDecoder
 import net.rsprot.protocol.message.codec.incoming.MessageDecoderRepository
 import net.rsprot.protocol.message.codec.incoming.MessageDecoderRepositoryBuilder
@@ -20,6 +22,8 @@ public object Js5MessageDecoderRepository {
                 bind(PriorityChangeLowDecoder())
                 bind(UrgentRequestDecoder())
                 bind(XorChangeDecoder())
+                bind(PrefetchRequestExtDecoder())
+                bind(UrgentRequestExtDecoder())
             }
         return builder.build()
     }
